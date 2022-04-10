@@ -1,7 +1,7 @@
-import axios, { AxiosInstance } from 'axios'
 import { request } from 'lib/axios'
 import { createContext, FC, useEffect, useMemo, useReducer, useState } from 'react'
 import todoReducer, { TodoAction } from './todoReducer'
+import useDarkMode, { Theme } from './useDarkMode'
 
 interface IContext {
   todos: {
@@ -13,6 +13,10 @@ interface IContext {
     login: (email: string, password: string) => Promise<void>
     logout: () => Promise<void>
     register: (name: string, email: string, password: string) => Promise<void>
+  }
+  theme: {
+    theme: Theme
+    setTheme: (theme: 'toggle' | Theme) => void
   }
 }
 
@@ -57,6 +61,7 @@ const Provider: FC = ({ children }) => {
       value={{
         todos: { todos, dispatchTodos },
         auth: { user, login, logout, register },
+        theme: useDarkMode(),
       }}
     >
       {children}

@@ -1,48 +1,12 @@
 import MoonIcon from 'images/icon-moon.svg'
 import SunIcon from 'images/icon-sun.svg'
 import Todos from 'components/Todos'
-import { useTheme } from 'tailwind/ThemeProvider'
-import { useContext } from 'context/useContext'
-import { useEffect } from 'react'
 import CreateTodo from 'components/CreateTodo'
 import TopBar from 'components/TopBar'
-import { request } from 'lib/axios'
+import { useContext } from 'context/useContext'
 
 const App = () => {
-  const [, setTheme] = useTheme()
-  const { todos, dispatchTodos } = useContext().todos
-  const { user } = useContext().auth
-
-  useEffect(() => {
-    const getMyTodos = async () => {
-      try {
-        const res = await request().get('/todos')
-        // @ts-ignore
-        return res.data.map((todo) => {
-          const { _id, ...todoData } = todo
-          return { ...todoData, id: _id }
-        })
-      } catch (err) {
-        return null
-      }
-    }
-
-    const setTodos = async () => {
-      // on first render, set todos from localStorage
-      if (!('todos' in localStorage)) {
-        localStorage.todos = JSON.stringify(todos)
-      }
-
-      let cloudTodos
-      if (user) cloudTodos = await getMyTodos()
-
-      dispatchTodos({
-        type: 'setTodo',
-        payload: cloudTodos ?? JSON.parse(localStorage.todos),
-      })
-    }
-    setTodos()
-  }, [user])
+  const { setTheme } = useContext().theme
 
   return (
     <main>

@@ -9,6 +9,6 @@ interface User {
   id: string
   name: string
   email: string
-  todoPositions: Todo[]
+  todoPositions: { todoId: string }[]
   token: string
 }

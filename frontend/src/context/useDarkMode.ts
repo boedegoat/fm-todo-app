@@ -1,9 +1,10 @@
-import { SetThemeType, ThemeType } from './typings'
 import { useEffect, useState } from 'react'
 
+export type Theme = 'dark' | 'light'
+
 // to avoid FOUC (Flash of unstyled content)
-export default function useDarkMode(): [ThemeType, SetThemeType] {
-  const [theme, setCurrentTheme] = useState<ThemeType>()
+export default function useDarkMode() {
+  const [theme, setCurrentTheme] = useState<Theme>()
 
   const handleThemeChange = () => {
     if ('theme' in localStorage) {
@@ -30,7 +31,7 @@ export default function useDarkMode(): [ThemeType, SetThemeType] {
     }
   }
 
-  const setTheme: SetThemeType = (theme) => {
+  const setTheme = (theme: 'toggle' | Theme) => {
     if (theme === 'toggle') {
       const themeMap = {
         light: 'dark',
@@ -48,5 +49,5 @@ export default function useDarkMode(): [ThemeType, SetThemeType] {
     handleThemeChange()
   }, [])
 
-  return [theme, setTheme]
+  return { theme: theme!, setTheme }
 }

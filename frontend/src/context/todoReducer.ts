@@ -35,6 +35,12 @@ const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
       request().delete(`/todos/${action.payload.id}`)
       let newTodos = [...todos]
       newTodos = newTodos.filter((todo) => todo.id !== action.payload.id)
+      // update todoPositions on delete
+      request().put('/me', {
+        todoPositions: newTodos.map((todo) => ({
+          todoId: todo.id,
+        })),
+      })
       localStorage.todos = JSON.stringify(newTodos)
       return newTodos
     }

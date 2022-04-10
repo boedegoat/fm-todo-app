@@ -27,22 +27,22 @@
   }
 
   .header-bg-mobile-light {
-    background-image: url(../images/bg-mobile-light.jpg);
+    background-image: url(./images/bg-mobile-light.jpg);
     @apply bg-utils;
   }
 
   .header-bg-mobile-dark {
-    background-image: url(../images/bg-mobile-dark.jpg);
+    background-image: url(./images/bg-mobile-dark.jpg);
     @apply bg-utils;
   }
 
   .header-bg-desktop-light {
-    background-image: url(../images/bg-desktop-light.jpg);
+    background-image: url(./images/bg-desktop-light.jpg);
     @apply bg-utils;
   }
 
   .header-bg-desktop-dark {
-    background-image: url(../images/bg-desktop-dark.jpg);
+    background-image: url(./images/bg-desktop-dark.jpg);
     @apply bg-utils;
   }
 }

@@ -1,12 +1,52 @@
 import { useContext } from 'context/useContext'
 import { cn } from 'lib/utils'
-import { FC, useCallback, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import Todo from './Todo'
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd'
+import { request } from 'lib/axios'
 
 const Todos = () => {
   const [filter, setFilter] = useState('all')
+  const { user } = useContext().auth
   const { todos, dispatchTodos } = useContext().todos
+
+  useEffect(() => {
+    const getMyTodos = async () => {
+      try {
+        const res = await request().get('/todos')
+        const todos = res.data
+
+        // if user.todoPositions available, sort the todos
+        if (user!.todoPositions.length) {
+          const sortedTodos = user!.todoPositions.map(
+            // @ts-ignore
+            ({ todoId }) => todos.find((todo) => todo.id === todoId)!
+          )
+          return sortedTodos
+        }
+
+        return todos
+      } catch (err) {
+        return []
+      }
+    }
+
+    const setTodos = async () => {
+      // on first render, set todos from localStorage
+      if (!('todos' in localStorage)) {
+        localStorage.todos = JSON.stringify(todos)
+      }
+
+      let cloudTodos: Todo[] = []
+      if (user) cloudTodos = await getMyTodos()
+
+      dispatchTodos({
+        type: 'setTodo',
+        payload: cloudTodos.length ? cloudTodos : JSON.parse(localStorage.todos),
+      })
+    }
+    setTodos()
+  }, [user])
 
   const FilterButton: FC = useCallback(
     ({ children }) => {
@@ -37,12 +77,6 @@ const Todos = () => {
       })
   }
 
-  const filterTodos = (todo: Todo) => {
-    if (filter == 'all') return true
-    if (filter == 'active') return !todo.isCompleted
-    if (filter == 'completed') return todo.isCompleted
-  }
-
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return
 
@@ -52,10 +86,21 @@ const Todos = () => {
     // put reordered item to destination
     newTodos.splice(result.destination.index, 0, reorderedItem)
 
+    if (user) {
+      const newTodoPositions = newTodos.map((todo) => ({ todoId: todo.id }))
+      request().put('/me', { todoPositions: newTodoPositions })
+    }
+
     dispatchTodos({
       type: 'setTodo',
       payload: newTodos,
     })
+  }
+
+  const filterTodos = (todo: Todo) => {
+    if (filter == 'all') return true
+    if (filter == 'active') return !todo.isCompleted
+    if (filter == 'completed') return todo.isCompleted
   }
 
   if (!todos.length) return null

@@ -35,12 +35,12 @@ const Login: FC<Props> = ({ onClose }) => {
   }
 
   return (
-    <div className='fixed z-10 inset-0 '>
-      <div className='absolute inset-0 bg-dark-blue/80' onClick={onClose} />
+    <div className='fixed z-10 inset-0'>
+      <div className='absolute inset-0 bg-dark-blue/95' onClick={onClose} />
       <form
         onSubmit={!isRegister ? onLogin : onRegister}
-        className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-light-grayish-blue-400
-                   p-6 rounded-2xl space-y-8 shadow-md min-w-[350px]'
+        className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-light-grayish-blue-400 dark:bg-dark-desaturated-blue dark:text-light-gray
+                   p-6 rounded-2xl space-y-8 shadow-md w-[90%] sm:w-[500px]'
       >
         {isRegister && <input className='w-full py-2' name='name' type='text' placeholder='name' />}
         <input className='w-full py-2' name='email' type='email' placeholder='email' />

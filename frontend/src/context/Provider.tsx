@@ -1,5 +1,6 @@
+import axios, { AxiosInstance } from 'axios'
 import { request } from 'lib/axios'
-import { createContext, FC, useEffect, useReducer, useState } from 'react'
+import { createContext, FC, useEffect, useMemo, useReducer, useState } from 'react'
 import todoReducer, { TodoAction } from './todoReducer'
 
 interface IContext {
@@ -28,14 +29,14 @@ const Provider: FC = ({ children }) => {
 
   useEffect(() => {
     const getUser = async () => {
-      const res = await request.get('/me')
+      const res = await request().get('/me')
       setUser(formatUser(res.data))
     }
     getUser()
   }, [])
 
   const login = async (email: string, password: string) => {
-    const res = await request.post('/auth/login', { email, password })
+    const res = await request().post('/auth/login', { email, password })
     localStorage.token = res.data.token
     setUser(formatUser(res.data))
   }
@@ -46,7 +47,7 @@ const Provider: FC = ({ children }) => {
   }
 
   const register = async (name: string, email: string, password: string) => {
-    const res = await request.post('/auth/register', { name, email, password })
+    const res = await request().post('/auth/register', { name, email, password })
     localStorage.token = res.data.token
     setUser(formatUser(res.data))
   }

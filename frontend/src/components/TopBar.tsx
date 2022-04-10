@@ -11,8 +11,6 @@ const TopBar = () => {
     else document.body.style.overflow = 'auto'
   }, [showLogin])
 
-  console.log(user)
-
   return (
     <div className='bg-light-grayish-blue-400 dark:bg-dark-desaturated-blue text-white py-2'>
       <div className='wrapper'>

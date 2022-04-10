@@ -6,22 +6,43 @@ import { useContext } from 'context/useContext'
 import { useEffect } from 'react'
 import CreateTodo from 'components/CreateTodo'
 import TopBar from 'components/TopBar'
+import { request } from 'lib/axios'
 
 const App = () => {
   const [, setTheme] = useTheme()
   const { todos, dispatchTodos } = useContext().todos
+  const { user } = useContext().auth
 
   useEffect(() => {
-    // on first render, set todos from localStorage
-    if (!('todos' in localStorage)) {
-      localStorage.todos = JSON.stringify(todos)
+    const getMyTodos = async () => {
+      try {
+        const res = await request().get('/todos')
+        // @ts-ignore
+        return res.data.map((todo) => {
+          const { _id, ...todoData } = todo
+          return { ...todoData, id: _id }
+        })
+      } catch (err) {
+        return null
+      }
     }
 
-    dispatchTodos({
-      type: 'setTodo',
-      payload: JSON.parse(localStorage.todos),
-    })
-  }, [])
+    const setTodos = async () => {
+      // on first render, set todos from localStorage
+      if (!('todos' in localStorage)) {
+        localStorage.todos = JSON.stringify(todos)
+      }
+
+      let cloudTodos
+      if (user) cloudTodos = await getMyTodos()
+
+      dispatchTodos({
+        type: 'setTodo',
+        payload: cloudTodos ?? JSON.parse(localStorage.todos),
+      })
+    }
+    setTodos()
+  }, [user])
 
   return (
     <main>

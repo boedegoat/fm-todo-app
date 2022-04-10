@@ -7,7 +7,7 @@ const CreateTodo = () => {
   const [content, setContent] = useState('')
   const [isError, setIsError] = useState(false)
   const [completed, setCompleted] = useState(false)
-  const [, dispatch] = useContext()
+  const { dispatchTodos } = useContext().todos
 
   const createNewTodo: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
@@ -15,7 +15,7 @@ const CreateTodo = () => {
       setIsError(true)
       return
     }
-    dispatch({
+    dispatchTodos({
       type: 'createNewTodo',
       payload: { content, isCompleted: completed },
     })

@@ -9,7 +9,7 @@ import TopBar from 'components/TopBar'
 
 const App = () => {
   const [, setTheme] = useTheme()
-  const [{ todos }, dispatch] = useContext()
+  const { todos, dispatchTodos } = useContext().todos
 
   useEffect(() => {
     // on first render, set todos from localStorage
@@ -17,7 +17,7 @@ const App = () => {
       localStorage.todos = JSON.stringify(todos)
     }
 
-    dispatch({
+    dispatchTodos({
       type: 'setTodo',
       payload: JSON.parse(localStorage.todos),
     })

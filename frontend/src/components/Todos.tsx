@@ -6,7 +6,7 @@ import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautif
 
 const Todos = () => {
   const [filter, setFilter] = useState('all')
-  const [{ todos }, dispatch] = useContext()
+  const { todos, dispatchTodos } = useContext().todos
 
   const FilterButton: FC = useCallback(
     ({ children }) => {
@@ -30,7 +30,7 @@ const Todos = () => {
     todos
       .filter((todo) => todo.isCompleted)
       .forEach((todo) => {
-        dispatch({
+        dispatchTodos({
           type: 'deleteTodo',
           payload: todo,
         })
@@ -52,7 +52,7 @@ const Todos = () => {
     // put reordered item to destination
     newTodos.splice(result.destination.index, 0, reorderedItem)
 
-    dispatch({
+    dispatchTodos({
       type: 'setTodo',
       payload: newTodos,
     })

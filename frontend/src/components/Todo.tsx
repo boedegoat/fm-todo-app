@@ -12,25 +12,25 @@ interface Props {
 }
 
 const Todo: FC<Props> = ({ todo, provided, snapshot }) => {
-  const [, dispatch] = useContext()
+  const { dispatchTodos } = useContext().todos
   const [content, setContent] = useState<string>()
 
   const markComplete = () => {
-    dispatch({
+    dispatchTodos({
       type: 'editTodo',
       payload: { ...todo, isCompleted: !todo.isCompleted ? true : false },
     })
   }
 
   const deleteTodo = () => {
-    dispatch({
+    dispatchTodos({
       type: 'deleteTodo',
       payload: todo,
     })
   }
 
   const editTodoContent = () => {
-    dispatch({
+    dispatchTodos({
       type: 'editTodo',
       payload: { ...todo, content },
     })

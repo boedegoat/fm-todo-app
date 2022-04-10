@@ -1,15 +1,14 @@
 interface Todo {
+  userId?: string
   id?: string
   content?: string
   isCompleted?: boolean
 }
 
-interface State {
-  todos: Todo[]
+interface User {
+  id: string
+  name: string
+  email: string
+  todoPositions: Todo[]
+  token: string
 }
-
-type Action =
-  | { type: 'createNewTodo'; payload: Todo }
-  | { type: 'setTodo'; payload: Todo[] | undefined }
-  | { type: 'editTodo'; payload: Todo }
-  | { type: 'deleteTodo'; payload: Todo }

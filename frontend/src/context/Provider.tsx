@@ -11,6 +11,7 @@ interface IContext {
     user: User | null
     login: (email: string, password: string) => Promise<void>
     logout: () => Promise<void>
+    register: (name: string, email: string, password: string) => Promise<void>
   }
 }
 
@@ -44,11 +45,17 @@ const Provider: FC = ({ children }) => {
     setUser(null)
   }
 
+  const register = async (name: string, email: string, password: string) => {
+    const res = await request.post('/auth/register', { name, email, password })
+    localStorage.token = res.data.token
+    setUser(formatUser(res.data))
+  }
+
   return (
     <Context.Provider
       value={{
         todos: { todos, dispatchTodos },
-        auth: { user, login, logout },
+        auth: { user, login, logout, register },
       }}
     >
       {children}

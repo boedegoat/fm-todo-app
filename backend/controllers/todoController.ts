@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express'
 import { CustomError } from '../lib/error'
 import Todo from '../models/Todo'
+import User from '../models/User'
 
 export const getAllTodos: RequestHandler = async (req, res) => {
   const todos = (await Todo.find({ userId: req.user._id })).map((todo) => {
@@ -18,6 +19,9 @@ export const createNewTodo: RequestHandler = async (req, res) => {
   }
 
   const newTodo = await Todo.create({ content, userId: req.user._id })
+  await User.findByIdAndUpdate(req.user._id, {
+    $addToSet: { todoPositions: { todoId: newTodo._id } },
+  })
   res.status(201).json(newTodo)
 }
 

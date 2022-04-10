@@ -3,7 +3,10 @@ import { CustomError } from '../lib/error'
 import Todo from '../models/Todo'
 
 export const getAllTodos: RequestHandler = async (req, res) => {
-  const todos = await Todo.find({ userId: req.user._id })
+  const todos = (await Todo.find({ userId: req.user._id })).map((todo) => {
+    const { _id, ...todoDoc } = todo._doc
+    return { ...todoDoc, id: _id }
+  })
   res.status(200).json(todos)
 }
 

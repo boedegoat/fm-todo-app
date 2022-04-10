@@ -8,9 +8,9 @@ export const getMe: RequestHandler = (req, res) => {
 }
 
 export const editMe: RequestHandler = async (req, res) => {
-  const { name, email, password } = req.body
+  const { name, email, password, todoPositions } = req.body
 
-  if (!name && !email && !password) {
+  if (!name && !email && !password && !todoPositions) {
     throw new CustomError('Please provide name or email or password', 400)
   }
 
@@ -20,6 +20,7 @@ export const editMe: RequestHandler = async (req, res) => {
       name,
       email,
       password,
+      todoPositions,
     },
     { new: true }
   )

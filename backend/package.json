@@ -10,6 +10,9 @@
   "keywords": [],
   "author": "boedegoat",
   "license": "ISC",
+  "engines": {
+    "node": "16.13.1"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",

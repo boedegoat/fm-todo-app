@@ -1,6 +1,8 @@
-# Frontendmentor Todo App
+# Fullstack Todo App
 
 <!-- screenshots here -->
+
+![](./screenshot.png)
 
 A challenge from [frontendmentor.io](https://www.frontendmentor.io/)
 
@@ -31,16 +33,12 @@ Users should be able to:
 
 ### What I learned
 
-- What do you think about this project ?
-- What have you learned from this project ?
-- Is there any issue while doing this project ?
-- How you solve those issue ?
-
 ### Useful Resources
 
 1. [Figma](https://www.figma.com/) - Paste your project design mockups to check the size, colors, etc.
 2. [React Beautiful DnD](https://github.com/atlassian/react-beautiful-dnd) - Beautiful and accessible drag and drop for lists with React
 3. [Vite](https://vitejs.dev/) - Fast react build tool
+4. [Lama Dev](https://www.youtube.com/c/LamaDev) - That guy helps me to undertand how backend works (Express middleware, JWT, error handling)
 
 ## Acknowledgments
 

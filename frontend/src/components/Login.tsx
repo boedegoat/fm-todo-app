@@ -9,17 +9,20 @@ const Login: FC<Props> = ({ onClose }) => {
   const [isRegister, setIsRegister] = useState(false)
   const [error, setError] = useState('')
   const { login, register } = useContext().auth
+  const [loading, setLoading] = useState(false)
 
   const onLogin: React.FormEventHandler<HTMLFormElement> = async (e) => {
     try {
       e.preventDefault()
       // @ts-ignore
       const [email, password]: HTMLInputElement[] = (e.target as HTMLFormElement).elements
+      setLoading(true)
       await login(email.value, password.value)
       onClose()
     } catch (err: any) {
       setError(err.response.data.message)
     }
+    setLoading(false)
   }
 
   const onRegister: React.FormEventHandler<HTMLFormElement> = async (e) => {
@@ -27,11 +30,13 @@ const Login: FC<Props> = ({ onClose }) => {
       e.preventDefault()
       // @ts-ignore
       const [name, email, password]: HTMLInputElement[] = (e.target as HTMLFormElement).elements
+      setLoading(true)
       await register(name.value, email.value, password.value)
       onClose()
     } catch (err: any) {
       setError(err.response.data.message)
     }
+    setLoading(false)
   }
 
   return (
@@ -47,7 +52,8 @@ const Login: FC<Props> = ({ onClose }) => {
         <input className='w-full py-2' name='password' type='password' placeholder='password' />
         <button
           type='submit'
-          className='bg-primary-blue hover:bg-primary-blue/50 text-white px-4 py-2 rounded-md'
+          disabled={loading}
+          className='bg-primary-blue hover:bg-primary-blue/50 disabled:bg-primary-blue/50 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md'
         >
           {!isRegister ? 'Login' : 'Register'}
         </button>

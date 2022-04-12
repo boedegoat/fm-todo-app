@@ -13,7 +13,7 @@ const Todos = () => {
   useEffect(() => {
     const getMyTodos = async () => {
       try {
-        const res = await request().get('/todos')
+        const res = await request.get('/todos')
         const todos = res.data
 
         // if user.todoPositions available, sort the todos
@@ -86,9 +86,10 @@ const Todos = () => {
     // put reordered item to destination
     newTodos.splice(result.destination.index, 0, reorderedItem)
 
+    // update todoPositions on drag end
     if (user) {
       const newTodoPositions = newTodos.map((todo) => ({ todoId: todo.id }))
-      request().put('/me', { todoPositions: newTodoPositions })
+      request.put('/me', { todoPositions: newTodoPositions })
     }
 
     dispatchTodos({

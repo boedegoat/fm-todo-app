@@ -18,7 +18,7 @@ const Login: FC<Props> = ({ onClose }) => {
       await login(email.value, password.value)
       onClose()
     } catch (err: any) {
-      setError(err.message)
+      setError(err.response.data.message)
     }
   }
 
@@ -30,7 +30,7 @@ const Login: FC<Props> = ({ onClose }) => {
       await register(name.value, email.value, password.value)
       onClose()
     } catch (err: any) {
-      setError(err.message)
+      setError(err.response.data.message)
     }
   }
 

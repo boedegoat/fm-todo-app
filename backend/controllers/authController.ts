@@ -93,7 +93,6 @@ export const refreshToken: RequestHandler = (req, res) => {
   }
 
   const user = useRefreshToken(refreshToken)
-  console.log({ user })
   const token = createToken(user as IUser)
 
   sendTokenCookie(res, token)

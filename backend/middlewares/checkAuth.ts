@@ -14,8 +14,6 @@ export const checkAuth: RequestHandler = async (req, res, next) => {
   token = token.replace('Bearer ', '')
   const userPayload = useToken(token)
 
-  console.log(userPayload)
-
   // get user from userPayload.id
   const user = await User.findById(userPayload._id)
 

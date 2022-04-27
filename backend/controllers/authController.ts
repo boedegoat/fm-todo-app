@@ -12,7 +12,7 @@ const sendTokenCookie = (res: Response, token: IToken) => {
     path: '/',
     expires: tokenExpiresDate,
     sameSite: 'none',
-    secure: process.env.PROD ?? false
+    secure: process.env.PROD ? true : false,
   })
 }
 
@@ -24,8 +24,8 @@ const sendRefreshTokenCookie = (res: Response, refreshToken: IToken) => {
     path: '/',
     httpOnly: true,
     expires: refreshTokenExpiresDate,
-   noneme
-    secure: process.env.PROD ?? falseSite: 'lax',
+    sameSite: 'none',
+    secure: process.env.PROD ? true : false,
   })
 }
 
@@ -34,10 +34,14 @@ const deleteTokenCookies = (res: Response) => {
   res.cookie('refreshToken', '', {
     path: '/',
     expires: currentTime,
+    sameSite: 'none',
+    secure: process.env.PROD ? true : false,
   })
   res.cookie('tokenLifespan', '', {
     path: '/',
     expires: currentTime,
+    sameSite: 'none',
+    secure: process.env.PROD ? true : false,
   })
 }
 

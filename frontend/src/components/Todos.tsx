@@ -3,7 +3,7 @@ import { cn } from 'lib/utils'
 import { FC, useCallback, useEffect, useState } from 'react'
 import Todo from './Todo'
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd'
-import { request } from 'lib/axios'
+import { authRequest, request } from 'lib/axios'
 
 const Todos = () => {
   const [filter, setFilter] = useState('all')
@@ -13,7 +13,7 @@ const Todos = () => {
   useEffect(() => {
     const getMyTodos = async () => {
       try {
-        const res = await request.get('/todos')
+        const res = await authRequest.get('/todos')
         const todos = res.data
 
         // if user.todoPositions available, sort the todos
@@ -89,7 +89,7 @@ const Todos = () => {
     // update todoPositions on drag end
     if (user) {
       const newTodoPositions = newTodos.map((todo) => ({ todoId: todo.id }))
-      request.put('/me', { todoPositions: newTodoPositions })
+      authRequest.put('/me', { todoPositions: newTodoPositions })
     }
 
     dispatchTodos({

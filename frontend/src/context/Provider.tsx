@@ -1,5 +1,6 @@
-import { request } from 'lib/axios'
-import { createContext, FC, useEffect, useMemo, useReducer, useState } from 'react'
+import axios from 'axios'
+import { authRequest, request } from 'lib/axios'
+import { createContext, FC, useEffect, useReducer, useState } from 'react'
 import todoReducer, { TodoAction } from './todoReducer'
 import useDarkMode, { Theme } from './useDarkMode'
 
@@ -33,8 +34,16 @@ const Provider: FC = ({ children }) => {
 
   useEffect(() => {
     const getUser = async () => {
-      const res = await request.get('/me')
-      setUser(formatUser(res.data))
+      try {
+        const res = await authRequest.get('/me')
+        setUser(formatUser(res.data))
+      } catch (err: any) {
+        if (err instanceof axios.Cancel) {
+          // silent error if there is no token
+          if (err.message == 'token not available') {
+          }
+        }
+      }
     }
     getUser()
   }, [])

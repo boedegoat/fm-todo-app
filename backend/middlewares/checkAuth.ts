@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import { CustomError } from '../lib/error'
 import { useToken } from '../lib/jwt'
-import User, { IUser } from '../models/User'
+import User from '../models/User'
 
 export const checkAuth: RequestHandler = async (req, res, next) => {
   // get token from req.headers

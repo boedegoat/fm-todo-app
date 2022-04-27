@@ -1,4 +1,4 @@
-import { request } from 'lib/axios'
+import { authRequest, request } from 'lib/axios'
 import { Reducer } from 'react'
 
 export type TodoAction =
@@ -10,7 +10,7 @@ export type TodoAction =
 const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
   switch (action.type) {
     case 'createNewTodo': {
-      request.post('/todos', { content: action.payload.content })
+      authRequest.post('/todos', { content: action.payload.content })
       const newTodo = { id: Date.now().toString(), isCompleted: false, ...action.payload }
       localStorage.todos = JSON.stringify([...todos, newTodo])
       return [...todos, newTodo]
@@ -23,7 +23,7 @@ const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
     }
 
     case 'editTodo': {
-      request.put(`/todos/${action.payload.id}`, action.payload)
+      authRequest.put(`/todos/${action.payload.id}`, action.payload)
       let newTodos = [...todos]
       const index = newTodos.findIndex((todo) => todo.id === action.payload.id)
       newTodos = [...newTodos.slice(0, index), action.payload, ...newTodos.slice(index + 1)]
@@ -32,11 +32,11 @@ const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
     }
 
     case 'deleteTodo': {
-      request.delete(`/todos/${action.payload.id}`)
+      authRequest.delete(`/todos/${action.payload.id}`)
       let newTodos = [...todos]
       newTodos = newTodos.filter((todo) => todo.id !== action.payload.id)
       // update todoPositions on delete
-      request.put('/me', {
+      authRequest.put('/me', {
         todoPositions: newTodos.map((todo) => ({
           todoId: todo.id,
         })),

@@ -1,27 +1,32 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
+import { getToken, setToken } from 'context/Provider'
+import { parseCookies } from 'nookies'
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:5000/api/'
 
-export const request = axios.create({
+let reqConfig: AxiosRequestConfig = {
   baseURL: API_BASE_URL,
-})
+  withCredentials: true,
+}
 
-export const authRequest = axios.create({
-  baseURL: API_BASE_URL,
-})
+export const request = axios.create(reqConfig)
+export const authRequest = axios.create(reqConfig)
 
 // axios middleware
 // before sending the request, run this func first
 authRequest.interceptors.request.use(
-  (config) => {
+  async (config) => {
     if (config.headers) {
-      const token = localStorage.token
-      if (!token) {
-        throw new axios.Cancel('token not available')
+      const { tokenLifespan } = parseCookies()
+      if (!tokenLifespan) {
+        const { data } = await request.get('/auth/refreshToken')
+        setToken(data.token)
       }
-      config.headers['token'] = 'Bearer ' + token
+      config.headers['token'] = 'Bearer ' + getToken()
     }
     return config
   },
-  (err) => Promise.reject(err)
+  (err) => {
+    return Promise.reject(err)
+  }
 )

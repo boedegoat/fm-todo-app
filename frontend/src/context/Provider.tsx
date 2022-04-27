@@ -23,6 +23,13 @@ interface IContext {
 
 export const Context = createContext({} as IContext)
 
+let token = ''
+
+export const getToken = () => token
+export const setToken = (value: string) => {
+  token = value
+}
+
 const formatUser = (user: any) => {
   const { _id, token, ...userData } = user
   return { ...userData, id: user._id }
@@ -33,24 +40,29 @@ const Provider: FC = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
 
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const res = await authRequest.get('/me')
-        setUser(formatUser(res.data))
-      } catch (err: any) {
-        if (err instanceof axios.Cancel) {
-          // silent error if there is no token
-          if (err.message == 'token not available') {
-          }
-        }
+    refreshToken()
+  }, [])
+
+  const getUser = async () => {
+    try {
+      const res = await authRequest.get('/me')
+      setUser(formatUser(res.data))
+    } catch (err: any) {
+      if (err instanceof axios.Cancel) {
+        // silent
       }
     }
+  }
+
+  const refreshToken = async () => {
+    const { data } = await request.get('/auth/refreshToken')
+    setToken(data.token)
     getUser()
-  }, [])
+  }
 
   const login = async (email: string, password: string) => {
     const res = await request.post('/auth/login', { email, password })
-    localStorage.token = res.data.token
+    setToken(res.data.token)
     setUser(formatUser(res.data))
   }
 
@@ -61,7 +73,7 @@ const Provider: FC = ({ children }) => {
 
   const register = async (name: string, email: string, password: string) => {
     const res = await request.post('/auth/register', { name, email, password })
-    localStorage.token = res.data.token
+    setToken(res.data.token)
     setUser(formatUser(res.data))
   }
 

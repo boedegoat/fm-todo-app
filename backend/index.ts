@@ -23,7 +23,9 @@ declare global {
 const app = express()
 
 // MIDDLEWARES
-app.use(cors())
+app.use(
+  cors({ credentials: true, origin: ['http://localhost:3000', 'https://nicetodo.vercel.app/'] })
+)
 app.use(express.json())
 
 // ROUTERS

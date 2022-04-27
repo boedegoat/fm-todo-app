@@ -1,8 +1,30 @@
-import { RequestHandler } from 'express'
+import { RequestHandler, Response } from 'express'
 import { CustomError } from '../lib/error'
-import User from '../models/User'
+import User, { IUser } from '../models/User'
 import { cryptPassword, decryptPassword } from '../lib/crypt'
-import { createToken } from '../lib/jwt'
+import { createRefreshToken, createToken, IToken, useRefreshToken } from '../lib/jwt'
+import { parseCookies } from 'nookies'
+
+const sendTokenCookie = (res: Response, token: IToken) => {
+  // send token lifespan to cookie
+  const tokenExpiresDate = new Date()
+  tokenExpiresDate.setTime(tokenExpiresDate.getTime() + token.expiresIn)
+  res.cookie('tokenLifespan', tokenExpiresDate, {
+    path: '/',
+    expires: tokenExpiresDate,
+  })
+}
+
+const sendRefreshTokenCookie = (res: Response, refreshToken: IToken) => {
+  // send refreshToken to httpOnly cookie
+  const refreshTokenExpiresDate = new Date()
+  refreshTokenExpiresDate.setTime(refreshTokenExpiresDate.getTime() + refreshToken.expiresIn)
+  res.cookie('refreshToken', refreshToken.value, {
+    path: '/',
+    httpOnly: true,
+    expires: refreshTokenExpiresDate,
+  })
+}
 
 export const register: RequestHandler = async (req, res) => {
   const { name, email, password } = req.body
@@ -17,9 +39,13 @@ export const register: RequestHandler = async (req, res) => {
     password: cryptPassword(password),
   })
 
-  const { password: p, ...others } = newUser._doc
   const token = createToken(newUser)
-  res.status(201).json({ ...others, token })
+  const refreshToken = createRefreshToken(newUser)
+  sendTokenCookie(res, token)
+  sendRefreshTokenCookie(res, refreshToken)
+
+  const { password: p, ...others } = newUser._doc
+  res.status(201).json({ ...others, token: token.value })
 }
 
 export const login: RequestHandler = async (req, res) => {
@@ -39,6 +65,25 @@ export const login: RequestHandler = async (req, res) => {
   }
 
   const token = createToken(user)
-  const { password: p, ...others } = user._doc
-  res.status(200).json({ ...others, token })
+  const refreshToken = createRefreshToken(user)
+  sendTokenCookie(res, token)
+  sendRefreshTokenCookie(res, refreshToken)
+
+  const { password: _, ...others } = user._doc
+  res.status(200).json({ ...others, token: token.value })
+}
+
+export const refreshToken: RequestHandler = (req, res) => {
+  const { refreshToken } = parseCookies({ req })
+
+  if (!refreshToken) {
+    throw new CustomError('you are not logged in', 401)
+  }
+
+  const user = useRefreshToken(refreshToken)
+  console.log({ user })
+  const token = createToken(user as IUser)
+
+  sendTokenCookie(res, token)
+  res.status(200).json({ token: token.value })
 }

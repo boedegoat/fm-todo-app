@@ -3,7 +3,6 @@ import { CustomError } from '../lib/error'
 import User, { IUser } from '../models/User'
 import { cryptPassword, decryptPassword } from '../lib/crypt'
 import { createRefreshToken, createToken, IToken, useRefreshToken } from '../lib/jwt'
-import { parseCookies } from 'nookies'
 
 const sendTokenCookie = (res: Response, token: IToken) => {
   // send token lifespan to cookie
@@ -87,7 +86,7 @@ export const login: RequestHandler = async (req, res) => {
 }
 
 export const refreshToken: RequestHandler = (req, res) => {
-  const { refreshToken } = parseCookies({ req })
+  const refreshToken = req.cookies.refreshToken
 
   if (!refreshToken) {
     throw new CustomError('you are not logged in', 401)

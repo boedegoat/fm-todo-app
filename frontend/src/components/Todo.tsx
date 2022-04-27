@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from 'react'
 import Checkbox from './Checkbox'
 import CrossIcon from 'images/icon-cross.svg'
 import { DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd'
+import { authRequest } from 'lib/axios'
 
 interface Props {
   todo: Todo
@@ -22,7 +23,7 @@ const Todo: FC<Props> = ({ todo, provided, snapshot }) => {
     })
   }
 
-  const deleteTodo = () => {
+  const deleteTodo = async () => {
     dispatchTodos({
       type: 'deleteTodo',
       payload: todo,

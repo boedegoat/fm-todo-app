@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { getToken, setToken } from 'context/Provider'
-import { parseCookies } from 'nookies'
+import Cookies from 'js-cookie'
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'http://localhost:5000/api/'
 
@@ -17,7 +17,7 @@ export const authRequest = axios.create(reqConfig)
 authRequest.interceptors.request.use(
   async (config) => {
     if (config.headers) {
-      const { tokenLifespan } = parseCookies()
+      const { tokenLifespan } = Cookies.get()
       if (!tokenLifespan) {
         const { data } = await request.get('/auth/refreshToken')
         setToken(data.token)

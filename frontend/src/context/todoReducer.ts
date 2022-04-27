@@ -32,14 +32,15 @@ const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
     }
 
     case 'deleteTodo': {
-      authRequest.delete(`/todos/${action.payload.id}`)
       let newTodos = [...todos]
       newTodos = newTodos.filter((todo) => todo.id !== action.payload.id)
-      // update todoPositions on delete
-      authRequest.put('/me', {
-        todoPositions: newTodos.map((todo) => ({
-          todoId: todo.id,
-        })),
+      authRequest.delete(`/todos/${action.payload.id}`).then(() => {
+        // update todoPositions on delete
+        authRequest.put('/me', {
+          todoPositions: newTodos.map((todo) => ({
+            todoId: todo.id,
+          })),
+        })
       })
       localStorage.todos = JSON.stringify(newTodos)
       return newTodos

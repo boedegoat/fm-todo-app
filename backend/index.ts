@@ -10,6 +10,7 @@ import { CustomError } from './lib/error'
 import { IUser } from './models/User'
 import { checkAuth } from './middlewares/checkAuth'
 import meRouter from './routers/me'
+import cookieParser from 'cookie-parser'
 
 // extends express req
 declare global {
@@ -24,9 +25,13 @@ const app = express()
 
 // MIDDLEWARES
 app.use(
-  cors({ credentials: true, origin: ['http://localhost:3000', 'https://nicetodo.vercel.app/'] })
+  cors({
+    credentials: true,
+    origin: ['http://localhost:3000', 'https://nicetodo.vercel.app/', 'http://localhost:4173'],
+  })
 )
 app.use(express.json())
+app.use(cookieParser())
 
 // ROUTERS
 app.use('/api/auth', authRouter)

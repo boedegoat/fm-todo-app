@@ -99,7 +99,7 @@ const Todos = () => {
   }
 
   const filterTodos = (todo: Todo) => {
-    if (filter == 'all') return true
+    if (filter == 'all') return todo
     if (filter == 'active') return !todo.isCompleted
     if (filter == 'completed') return todo.isCompleted
   }

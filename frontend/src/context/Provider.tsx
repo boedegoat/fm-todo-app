@@ -67,8 +67,9 @@ const Provider: FC = ({ children }) => {
   }
 
   const logout = async () => {
-    delete localStorage.token
-    setUser(null)
+    await request.get('/auth/logout')
+    dispatchTodos({ type: 'setTodo', payload: [] })
+    location.reload()
   }
 
   const register = async (name: string, email: string, password: string) => {

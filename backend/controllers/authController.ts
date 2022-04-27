@@ -26,6 +26,19 @@ const sendRefreshTokenCookie = (res: Response, refreshToken: IToken) => {
   })
 }
 
+const deleteTokenCookies = (res: Response) => {
+  const currentTime = new Date()
+  res.cookie('refreshToken', '', {
+    path: '/',
+    httpOnly: true,
+    expires: currentTime,
+  })
+  res.cookie('tokenLifespan', '', {
+    path: '/',
+    expires: currentTime,
+  })
+}
+
 export const register: RequestHandler = async (req, res) => {
   const { name, email, password } = req.body
 
@@ -86,4 +99,9 @@ export const refreshToken: RequestHandler = (req, res) => {
 
   sendTokenCookie(res, token)
   res.status(200).json({ token: token.value })
+}
+
+export const logout: RequestHandler = (req, res) => {
+  deleteTokenCookies(res)
+  res.status(200).json({ message: 'logout success' })
 }

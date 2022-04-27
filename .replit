@@ -1,0 +1,2 @@
+language = "bash"
+run = "cd backend && npm i && npm run postinstall && npm start"

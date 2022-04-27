@@ -27,7 +27,7 @@ const app = express()
 app.use(
   cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'https://nicetodo.vercel.app/', 'http://localhost:4173'],
+    origin: ['http://localhost:3000', 'https://nicetodo.vercel.app', 'http://localhost:4173'],
   })
 )
 app.use(express.json())

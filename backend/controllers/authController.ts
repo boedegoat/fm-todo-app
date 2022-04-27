@@ -11,6 +11,7 @@ const sendTokenCookie = (res: Response, token: IToken) => {
   res.cookie('tokenLifespan', tokenExpiresDate, {
     path: '/',
     expires: tokenExpiresDate,
+    sameSite: 'none',
   })
 }
 
@@ -22,6 +23,7 @@ const sendRefreshTokenCookie = (res: Response, refreshToken: IToken) => {
     path: '/',
     httpOnly: true,
     expires: refreshTokenExpiresDate,
+    sameSite: 'none',
   })
 }
 
@@ -29,7 +31,6 @@ const deleteTokenCookies = (res: Response) => {
   const currentTime = new Date()
   res.cookie('refreshToken', '', {
     path: '/',
-    httpOnly: true,
     expires: currentTime,
   })
   res.cookie('tokenLifespan', '', {

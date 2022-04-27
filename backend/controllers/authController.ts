@@ -11,7 +11,7 @@ const sendTokenCookie = (res: Response, token: IToken) => {
   res.cookie('tokenLifespan', tokenExpiresDate, {
     path: '/',
     expires: tokenExpiresDate,
-    sameSite: 'none',
+    sameSite: 'lax',
   })
 }
 
@@ -23,7 +23,7 @@ const sendRefreshTokenCookie = (res: Response, refreshToken: IToken) => {
     path: '/',
     httpOnly: true,
     expires: refreshTokenExpiresDate,
-    sameSite: 'none',
+    sameSite: 'lax',
   })
 }
 

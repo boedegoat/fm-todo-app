@@ -15,7 +15,7 @@ const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
       if (action.user) {
         authRequest.post('/todos', action.payload).then((res) => {
           const localTodos = JSON.parse(localStorage.todos)
-          const thisTodoIdx = localTodos.findIndex((todo) => todo.id == newTodo.id)
+          const thisTodoIdx = localTodos.findIndex((todo: Todo) => todo.id == newTodo.id)
           localStorage.todos = JSON.stringify([
             ...localTodos.slice(0, thisTodoIdx),
             { ...newTodo, id: res.data._id },

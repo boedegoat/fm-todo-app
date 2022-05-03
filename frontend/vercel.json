@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://fm-todo-app.boedegoat.repl.co/:path*"
+    },
+    {
+      "source": "/api/:path*/",
+      "destination": "https://fm-todo-app.boedegoat.repl.co/:path*/"
+    }
+  ]
+}

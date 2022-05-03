@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://fm-todo-app.boedegoat.repl.co/:path*"
+      "destination": "https://fm-todo-app.boedegoat.repl.co/api/:path*"
     },
     {
       "source": "/api/:path*/",
-      "destination": "https://fm-todo-app.boedegoat.repl.co/:path*/"
+      "destination": "https://fm-todo-app.boedegoat.repl.co/api/:path*/"
     }
   ]
 }

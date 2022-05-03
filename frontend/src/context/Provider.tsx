@@ -47,17 +47,15 @@ const Provider: FC = ({ children }) => {
     try {
       const res = await authRequest.get('/me')
       setUser(formatUser(res.data))
-    } catch (err: any) {
-      if (err instanceof axios.Cancel) {
-        // silent
-      }
-    }
+    } catch (err: any) {}
   }
 
   const refreshToken = async () => {
-    const { data } = await request.get('/auth/refreshToken')
-    setToken(data.token)
-    getUser()
+    try {
+      const { data, status } = await request.get('/auth/refreshToken')
+      setToken(data.token)
+      getUser()
+    } catch (err: any) {}
   }
 
   const login = async (email: string, password: string) => {

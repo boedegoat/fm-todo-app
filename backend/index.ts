@@ -26,12 +26,11 @@ const app = express()
 // MIDDLEWARES
 app.use(
   cors({
-    credentials: true,
     origin: ['http://localhost:3000', 'https://nicetodo.vercel.app', 'http://localhost:4173'],
   })
 )
 app.use(express.json())
-app.use(cookieParser())
+app.use(cookieParser('UEcWwtrkB6dnxfCnFfbRnU3NREanHcLeQsu/DXTCRsY='))
 
 // ROUTERS
 app.use('/api/auth', authRouter)

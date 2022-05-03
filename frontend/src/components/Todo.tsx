@@ -4,7 +4,6 @@ import { FC, useEffect, useState } from 'react'
 import Checkbox from './Checkbox'
 import CrossIcon from 'images/icon-cross.svg'
 import { DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd'
-import { authRequest } from 'lib/axios'
 
 interface Props {
   todo: Todo

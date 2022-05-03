@@ -21,8 +21,9 @@ const Login: FC<Props> = ({ onClose }) => {
       onClose()
     } catch (err: any) {
       setError(err.response.data.message)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const onRegister: React.FormEventHandler<HTMLFormElement> = async (e) => {

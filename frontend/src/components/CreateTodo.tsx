@@ -8,6 +8,7 @@ const CreateTodo = () => {
   const [isError, setIsError] = useState(false)
   const [completed, setCompleted] = useState(false)
   const { dispatchTodos } = useContext().todos
+  const { user } = useContext().auth
 
   const createNewTodo: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
@@ -18,6 +19,7 @@ const CreateTodo = () => {
     dispatchTodos({
       type: 'createNewTodo',
       payload: { content, isCompleted: completed },
+      user,
     })
     setContent('')
     setIsError(false)

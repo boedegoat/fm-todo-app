@@ -31,3 +31,8 @@ const UserSchema = new mongoose.Schema<IUser>(
 )
 
 export default mongoose.model<IUser>('User', UserSchema)
+
+// on remove user, delete all todo that owned by the user
+UserSchema.pre('remove', async function () {
+  await this.model('Todo').deleteMany({ userId: this._id })
+})

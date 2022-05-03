@@ -6,41 +6,35 @@ import { createRefreshToken, createToken, IToken, useRefreshToken } from '../lib
 
 const sendTokenCookie = (res: Response, token: IToken) => {
   // send token lifespan to cookie
-  const tokenExpiresDate = new Date()
-  tokenExpiresDate.setTime(tokenExpiresDate.getTime() + token.expiresIn)
-  res.cookie('tokenLifespan', tokenExpiresDate, {
+  const tokenExpiresDate = new Date(Date.now() + token.expiresIn)
+  res.cookie('tokenLifespan', 'token lifespan', {
     path: '/',
     expires: tokenExpiresDate,
-    sameSite: 'none',
     secure: process.env.PROD ? true : false,
   })
 }
 
 const sendRefreshTokenCookie = (res: Response, refreshToken: IToken) => {
   // send refreshToken to httpOnly cookie
-  const refreshTokenExpiresDate = new Date()
-  refreshTokenExpiresDate.setTime(refreshTokenExpiresDate.getTime() + refreshToken.expiresIn)
+  const refreshTokenExpiresDate = new Date(Date.now() + refreshToken.expiresIn)
   res.cookie('refreshToken', refreshToken.value, {
     path: '/',
     httpOnly: true,
     expires: refreshTokenExpiresDate,
-    sameSite: 'none',
     secure: process.env.PROD ? true : false,
+    signed: true,
   })
 }
 
 const deleteTokenCookies = (res: Response) => {
-  const currentTime = new Date()
   res.cookie('refreshToken', '', {
     path: '/',
-    expires: currentTime,
-    sameSite: 'none',
+    maxAge: 0,
     secure: process.env.PROD ? true : false,
   })
   res.cookie('tokenLifespan', '', {
     path: '/',
-    expires: currentTime,
-    sameSite: 'none',
+    maxAge: 0,
     secure: process.env.PROD ? true : false,
   })
 }
@@ -93,7 +87,7 @@ export const login: RequestHandler = async (req, res) => {
 }
 
 export const refreshToken: RequestHandler = (req, res) => {
-  const refreshToken = req.cookies.refreshToken
+  const refreshToken = req.signedCookies.refreshToken
 
   if (!refreshToken) {
     throw new CustomError('you are not logged in', 401)

@@ -1,8 +1,8 @@
-import { authRequest, request } from 'lib/axios'
+import { authRequest } from 'lib/axios'
 import { Reducer } from 'react'
 
 export type TodoAction =
-  | { type: 'createNewTodo'; payload: Todo }
+  | { type: 'createNewTodo'; payload: Todo; user: User | null }
   | { type: 'setTodo'; payload: Todo[] | undefined }
   | { type: 'editTodo'; payload: Todo }
   | { type: 'deleteTodo'; payload: Todo }
@@ -10,9 +10,21 @@ export type TodoAction =
 const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
   switch (action.type) {
     case 'createNewTodo': {
-      authRequest.post('/todos', { content: action.payload.content })
-      const newTodo = { id: Date.now().toString(), isCompleted: false, ...action.payload }
+      let newTodo = { id: Date.now().toString(), isCompleted: false, ...action.payload }
       localStorage.todos = JSON.stringify([...todos, newTodo])
+      if (action.user) {
+        authRequest.post('/todos', action.payload).then((res) => {
+          const localTodos = JSON.parse(localStorage.todos)
+          const thisTodoIdx = localTodos.findIndex((todo) => todo.id == newTodo.id)
+          localStorage.todos = JSON.stringify([
+            ...localTodos.slice(0, thisTodoIdx),
+            { ...newTodo, id: res.data._id },
+            ...localTodos.slice(thisTodoIdx + 1),
+          ])
+          newTodo.id = res.data._id
+          return [...todos, newTodo]
+        })
+      }
       return [...todos, newTodo]
     }
 
@@ -32,16 +44,9 @@ const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
     }
 
     case 'deleteTodo': {
+      authRequest.delete(`/todos/${action.payload.id}`)
       let newTodos = [...todos]
       newTodos = newTodos.filter((todo) => todo.id !== action.payload.id)
-      authRequest.delete(`/todos/${action.payload.id}`).then(() => {
-        // update todoPositions on delete
-        authRequest.put('/me', {
-          todoPositions: newTodos.map((todo) => ({
-            todoId: todo.id,
-          })),
-        })
-      })
       localStorage.todos = JSON.stringify(newTodos)
       return newTodos
     }

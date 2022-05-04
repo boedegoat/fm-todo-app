@@ -1,4 +1,5 @@
 import { useContext } from 'context/useContext'
+import { authRequest } from 'lib/axios'
 import { cn } from 'lib/utils'
 import React, { useState } from 'react'
 import Checkbox from './Checkbox'
@@ -10,7 +11,7 @@ const CreateTodo = () => {
   const { dispatchTodos } = useContext().todos
   const { user } = useContext().auth
 
-  const createNewTodo: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const createNewTodo: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
     if (!content) {
       setIsError(true)
@@ -19,10 +20,25 @@ const CreateTodo = () => {
     dispatchTodos({
       type: 'createNewTodo',
       payload: { content, isCompleted: completed },
-      user,
     })
     setContent('')
     setIsError(false)
+    if (user) {
+      authRequest.post('/todos', { content, isCompleted: completed }).then((res) => {
+        const localTodos = JSON.parse(localStorage.todos)
+        const newTodoIdx = localTodos.length - 1
+        const updatedTodos = [
+          ...localTodos.slice(0, newTodoIdx),
+          { ...localTodos[newTodoIdx], id: res.data._id },
+          ...localTodos.slice(newTodoIdx + 1),
+        ]
+        localStorage.todos = JSON.stringify(updatedTodos)
+        dispatchTodos({
+          type: 'setTodo',
+          payload: updatedTodos,
+        })
+      })
+    }
   }
 
   return (

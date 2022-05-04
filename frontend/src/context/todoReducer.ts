@@ -10,7 +10,7 @@ export type TodoAction =
 const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
   switch (action.type) {
     case 'createNewTodo': {
-      let newTodo = { id: Date.now().toString(), isCompleted: false, ...action.payload }
+      let newTodo = { id: 'local ' + Date.now().toString(), isCompleted: false, ...action.payload }
       localStorage.todos = JSON.stringify([...todos, newTodo])
       if (action.user) {
         authRequest.post('/todos', action.payload).then((res) => {
@@ -35,7 +35,6 @@ const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
     }
 
     case 'editTodo': {
-      authRequest.put(`/todos/${action.payload.id}`, action.payload)
       let newTodos = [...todos]
       const index = newTodos.findIndex((todo) => todo.id === action.payload.id)
       newTodos = [...newTodos.slice(0, index), action.payload, ...newTodos.slice(index + 1)]
@@ -44,7 +43,6 @@ const todoReducer: Reducer<Todo[], TodoAction> = (todos, action) => {
     }
 
     case 'deleteTodo': {
-      authRequest.delete(`/todos/${action.payload.id}`)
       let newTodos = [...todos]
       newTodos = newTodos.filter((todo) => todo.id !== action.payload.id)
       localStorage.todos = JSON.stringify(newTodos)

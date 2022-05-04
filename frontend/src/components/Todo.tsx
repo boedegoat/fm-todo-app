@@ -1,9 +1,10 @@
 import { useContext } from 'context/useContext'
 import { cn } from 'lib/utils'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import Checkbox from './Checkbox'
 import CrossIcon from 'images/icon-cross.svg'
 import { DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd'
+import { authRequest } from 'lib/axios'
 
 interface Props {
   todo: Todo
@@ -13,7 +14,7 @@ interface Props {
 
 const Todo: FC<Props> = ({ todo, provided, snapshot }) => {
   const { dispatchTodos } = useContext().todos
-  const [content, setContent] = useState<string>()
+  const { user } = useContext().auth
 
   const markComplete = () => {
     dispatchTodos({
@@ -27,21 +28,22 @@ const Todo: FC<Props> = ({ todo, provided, snapshot }) => {
       type: 'deleteTodo',
       payload: todo,
     })
+    if (user) {
+      await authRequest.delete(`/todos/${todo.id}`)
+    }
   }
 
-  const editTodoContent = () => {
+  const editTodoContent = async () => {
+    const newContent = prompt('Edit Todo', todo.content)
+    if (!newContent) return
     dispatchTodos({
       type: 'editTodo',
-      payload: { ...todo, content },
+      payload: { ...todo, content: newContent },
     })
-  }
-
-  useEffect(() => {
-    // if content already a string
-    if (typeof content == 'string') {
-      content ? editTodoContent() : deleteTodo()
+    if (user) {
+      await authRequest.put(`/todos/${todo.id}`, { ...todo, content: newContent })
     }
-  }, [content])
+  }
 
   return (
     <div
@@ -74,17 +76,18 @@ const Todo: FC<Props> = ({ todo, provided, snapshot }) => {
       </div>
 
       {/* TODO CONTENT + EDIT */}
-      <input
+      <span
         className={cn(
-          'flex-1 py-5',
+          'flex-1 py-5 cursor-text',
           todo.isCompleted
             ? 'line-through text-light-grayish-blue-300 dark:text-dark-grayish-blue-300'
             : ''
         )}
-        type='text'
-        onChange={(e) => setContent(e.target.value)}
-        value={todo.content}
-      />
+        // onChange={(e) => setContent(e.target.value)}
+        onClick={editTodoContent}
+      >
+        {todo.content}
+      </span>
 
       {/* DELETE BUTTON */}
       <button className='p-4' onClick={deleteTodo}>

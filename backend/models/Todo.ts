@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { IUser } from './User'
+import User from './User'
 
 export interface ITodo extends MongoDoc {
   userId: mongoose.Types.ObjectId
@@ -23,26 +23,24 @@ const TodoSchema = new mongoose.Schema<ITodo>(
   { timestamps: true }
 )
 
-export default mongoose.model<ITodo>('Todo', TodoSchema)
-
 // before save the document, update todo position in user
 TodoSchema.pre('save', async function () {
-  const user = await this.model('User').findById(this.userId)
+  const user = await User.findById(this.userId)
   if (user) {
-    // @ts-ignore
-    user.todoPositions = [...user.todoPositions, { todoId: this._id }]
+    user.todoPositions = [...user.todoPositions, { todoId: this.id }]
     await user.save()
-    console.log('success update todo positions')
   }
 })
 
 // before remove the document, update todo position in user
 TodoSchema.pre('remove', async function () {
-  const user = await this.model('User').findById(this.userId)
+  const user = await User.findById(this.userId)
   if (user) {
-    // @ts-ignore
-    user.todoPositions = user.todoPositions.filter((todo) => todo.todoId !== this._id)
+    user.todoPositions = user.todoPositions.filter((todo) => {
+      return todo.todoId.toString() !== this.id
+    })
     await user.save()
-    console.log('success update todo positions')
   }
 })
+
+export default mongoose.model<ITodo>('Todo', TodoSchema)

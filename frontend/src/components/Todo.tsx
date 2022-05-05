@@ -16,11 +16,14 @@ const Todo: FC<Props> = ({ todo, provided, snapshot }) => {
   const { dispatchTodos } = useContext().todos
   const { user } = useContext().auth
 
-  const markComplete = () => {
+  const markComplete = async () => {
     dispatchTodos({
       type: 'editTodo',
-      payload: { ...todo, isCompleted: !todo.isCompleted ? true : false },
+      payload: { ...todo, isCompleted: !todo.isCompleted },
     })
+    if (user) {
+      await authRequest.put(`/todos/${todo.id}`, { ...todo, isCompleted: !todo.isCompleted })
+    }
   }
 
   const deleteTodo = async () => {
